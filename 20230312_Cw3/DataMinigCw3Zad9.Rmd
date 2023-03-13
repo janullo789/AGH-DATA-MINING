@@ -1,0 +1,54 @@
+---
+title: "Skwarczenski"
+author: "Jan Skwarczenski"
+date: "2023-03-13"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Mining- cw2
+
+```{r cars}
+data("cars")
+summary(cars)
+head(cars)
+tail(cars)
+```
+
+```{r wykres}
+plot(cars$dist, cars$speed)
+```
+
+```{r histogram, echo=FALSE}
+hist(cars$dist)
+```
+
+```{r zmienne}
+zmienna1 <- c("a","b","c")
+zmienna2 <- c(1,2,3)
+zmienna3 <- c(TRUE, FALSE, TRUE)
+
+zmienna1
+zmienna2
+zmienna3
+```
+
+``` {r, gapminder, echo=TRUE}
+library(gapminder)
+library(dplyr)
+library(ggplot2)
+#View(gapminder)
+gapminder %>% 
+  filter(year==2002) %>%
+  pull(country,pop)
+
+ggplot(gapminder, aes(x = pop)) +
+  geom_histogram(fill = "blue")
+
+```
+
