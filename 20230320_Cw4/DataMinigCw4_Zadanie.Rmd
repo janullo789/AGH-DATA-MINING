@@ -1,0 +1,103 @@
+---
+title: "Zad 3, ćw 4"
+author: "Jan Skwarczeński & Mateusz Zygmunt"
+date: "2023-03-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Loading libraries
+```{r libraries}
+library(dplyr)
+library(zoo)
+library(ggplot2)
+library(plotly)
+```
+
+## Data loading and before prepocesing
+```{r cars} 
+cars = read.csv("cars.txt")
+head(cars)
+str(cars)
+```
+
+## Preprocessing
+### Change column *cubicinches* type from chr to int
+```{r preprocessing #1}
+cars$cubicinches = as.integer(cars$cubicinches)
+str(cars)
+```
+
+### Create a data frame that contains all the columns except the last two
+```{r preprocessing #2}
+carsProcess = cars[, c(1:6)]
+```
+
+### Change of values less than or equal to 0 to NA
+```{r preprocessing #3}
+for(i in 1:ncol(carsProcess)) {
+  for (j in 1:nrow(carsProcess)) {
+    
+    if (is.na(carsProcess[j, i])) {
+      next
+    }
+    if (carsProcess[j, i] <= 0) {
+      carsProcess[j, i] = NA
+    }
+  }
+}
+```
+
+### Change in the value of out-of-range extremes on NA
+```{r preprocessing #4}
+for (i in 1:ncol(carsProcess)) {
+  minAcceptValue = mean(carsProcess[, i], na.rm = TRUE) - 
+    3 * sd(carsProcess[, i], na.rm = TRUE)
+  maxAcceptValue = mean(carsProcess[, i], na.rm = TRUE) + 
+    3 * sd(carsProcess[, i], na.rm = TRUE)
+  
+  for (j in 1:nrow(carsProcess)) {
+    if (is.na(carsProcess[j, i])) {
+      next
+    }
+    if (carsProcess[j, i] > maxAcceptValue || carsProcess[j, i] < minAcceptValue) {
+      carsProcess[j, i] = NA
+    }
+  }
+}
+```
+
+### Change NA value to the average of fields from a given column
+##### The missing values in the dataframe were replaced with the mean of the remaining fields to ensure that the overall statistical analysis of the data is not significantly affected by the missing values. This approach is a common technique in data preprocessing to handle missing data in a simple and efficient manner.
+```{r preprocessing #5}
+for (i in 1:ncol(carsProcess)) {
+  meanCol = as.integer(mean(carsProcess[, i], na.rm = TRUE))
+  
+  for (j in 1:nrow(carsProcess)) {
+    if (is.na(carsProcess[j, i])) {
+      carsProcess[j, i] = meanCol
+    }
+  }
+}
+```
+
+## Comparison of original values with values after prepocesing
+```{r comparison}
+for (i in 1:ncol(carsProcess)) {
+  titles = colnames(carsProcess[i])
+  boxplot(cars[, i], main = paste(titles, "pre"))
+  boxplot(carsProcess[, i], main = paste(titles, "post"))
+  
+  plot(cars[, i], main = paste(titles, "pre"))
+  plot(carsProcess[, i], main = paste(titles, "post"))
+  
+  hist(cars[, i], main = paste(titles, "pre"))
+  hist(carsProcess[, i], main = paste(titles, "post"))
+}
+```
+
+## Summary
+##### After preprocessing, data that contradicts logic and erroneous values were disposed of. Blank values were replaced with averages from valid fields. Thus prepared, the data are now suitable for analysis.

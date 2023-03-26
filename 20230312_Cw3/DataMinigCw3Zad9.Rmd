@@ -38,7 +38,7 @@ zmienna2
 zmienna3
 ```
 
-``` {r, gapminder, echo=TRUE}
+```{r, gapminder, echo=TRUE}
 library(gapminder)
 library(dplyr)
 library(ggplot2)
@@ -51,4 +51,3 @@ ggplot(gapminder, aes(x = pop)) +
   geom_histogram(fill = "blue")
 
 ```
-
